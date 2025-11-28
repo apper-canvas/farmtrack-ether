@@ -9,6 +9,7 @@ import ErrorView from "@/components/ui/ErrorView";
 import Empty from "@/components/ui/Empty";
 import Select from "@/components/atoms/Select";
 import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
 import ExpenseCard from "@/components/organisms/ExpenseCard";
 import Farms from "@/components/pages/Farms";
 import FloatingActionButton from "@/components/molecules/FloatingActionButton";
@@ -27,6 +28,8 @@ const Expenses = () => {
   const [editingExpense, setEditingExpense] = useState(null);
 const [filterCategory, setFilterCategory] = useState("all");
   const [filterFarm, setFilterFarm] = useState("all");
+  const [dateRangeStart, setDateRangeStart] = useState("");
+  const [dateRangeEnd, setDateRangeEnd] = useState("");
   const [chartType, setChartType] = useState("bar");
   const [chartPeriod, setChartPeriod] = useState("monthly");
   
@@ -152,7 +155,34 @@ const [filterCategory, setFilterCategory] = useState("all");
     setEditingExpense(null);
   };
 
-  const getFilteredExpenses = () => {
+const getFilteredExpenses = () => {
+    if (!data?.expenses) return [];
+    
+    return data.expenses.filter(expense => {
+      const categoryMatch = filterCategory === "all" || expense.category === filterCategory;
+      const farmMatch = filterFarm === "all" || expense.farmId?.toString() === filterFarm;
+      
+      let dateMatch = true;
+      if (dateRangeStart || dateRangeEnd) {
+        const expenseDate = new Date(expense.date);
+        const startDate = dateRangeStart ? new Date(dateRangeStart) : null;
+        const endDate = dateRangeEnd ? new Date(dateRangeEnd) : null;
+        
+        if (startDate && expenseDate < startDate) {
+          dateMatch = false;
+        }
+        if (endDate && expenseDate > endDate) {
+          dateMatch = false;
+        }
+      }
+      
+      return categoryMatch && farmMatch && dateMatch;
+    });
+  };
+
+  const filteredExpenses = getFilteredExpenses();
+
+  const getFilteredExpensesOld = () => {
     let filteredExpenses = [...data.expenses];
     
     // Category filter
@@ -565,10 +595,9 @@ const getChartData = () => {
   }
 
   if (error) {
-    return <ErrorView error={error} onRetry={loadData} />;
+return <ErrorView error={error} onRetry={loadData} />;
   }
 
-  const filteredExpenses = getFilteredExpenses();
   const stats = getExpenseStats();
 
   return (
@@ -825,7 +854,7 @@ const getChartData = () => {
         )}
         {/* Filters */}
         <div className="bg-white rounded-xl shadow-card border border-gray-100 p-6 mb-6">
-          <div className="flex items-center space-x-4">
+<div className="flex items-center space-x-4 mb-4">
             <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Category
@@ -865,12 +894,45 @@ const getChartData = () => {
                 onClick={() => {
                   setFilterCategory("all");
                   setFilterFarm("all");
+                  setDateRangeStart("");
+                  setDateRangeEnd("");
                 }}
                 variant="outline"
                 size="sm"
               >
                 Clear Filters
               </Button>
+            </div>
+          </div>
+          
+          {/* Date Range Filters */}
+          <div className="flex items-center space-x-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Start Date
+              </label>
+              <Input
+                type="date"
+                value={dateRangeStart}
+                onChange={(e) => setDateRangeStart(e.target.value)}
+                placeholder="Select start date"
+              />
+            </div>
+            
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                End Date
+              </label>
+              <Input
+                type="date"
+                value={dateRangeEnd}
+                onChange={(e) => setDateRangeEnd(e.target.value)}
+                placeholder="Select end date"
+              />
+            </div>
+            
+            <div className="flex-1">
+              {/* Empty space for alignment */}
             </div>
           </div>
         </div>
