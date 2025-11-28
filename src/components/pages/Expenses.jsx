@@ -29,6 +29,17 @@ const [filterCategory, setFilterCategory] = useState("all");
   const [filterFarm, setFilterFarm] = useState("all");
   const [chartType, setChartType] = useState("bar");
   const [chartPeriod, setChartPeriod] = useState("monthly");
+  
+  // Category options - defined early to prevent scope issues
+  const categoryOptions = [
+    { value: "seeds", label: "Seeds" },
+    { value: "fertilizer", label: "Fertilizer" },
+    { value: "equipment", label: "Equipment" },
+    { value: "labor", label: "Labor" },
+    { value: "fuel", label: "Fuel" },
+    { value: "maintenance", label: "Maintenance" },
+  ];
+  
   // Form state
   const [expenseForm, setExpenseForm] = useState({
     farmId: "",
@@ -37,7 +48,6 @@ const [filterCategory, setFilterCategory] = useState("all");
     description: "",
     date: new Date().toISOString().split("T")[0],
   });
-
   useEffect(() => {
     loadData();
   }, []);
@@ -549,15 +559,6 @@ const getChartData = () => {
       };
     }
   };
-
-  const categoryOptions = [
-    { value: "seeds", label: "Seeds" },
-    { value: "fertilizer", label: "Fertilizer" },
-    { value: "equipment", label: "Equipment" },
-    { value: "labor", label: "Labor" },
-    { value: "fuel", label: "Fuel" },
-    { value: "maintenance", label: "Maintenance" },
-  ];
 
   if (loading) {
     return <Loading message="Loading your expenses..." variant="list" />;
