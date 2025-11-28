@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
+import Chart from "react-apexcharts";
 import { expenseService } from "@/services/api/expenseService";
 import { farmService } from "@/services/api/farmService";
 import { toast } from "react-toastify";
-import Chart from "react-apexcharts";
 import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
@@ -201,9 +201,31 @@ const getExpenseStats = () => {
     };
   };
 
-  const getChartData = () => {
+const getChartData = () => {
     const stats = getExpenseStats();
     const currentDate = new Date();
+    
+    // Ensure we have valid data and categoryOptions
+    if (!data?.expenses || !Array.isArray(data.expenses) || !categoryOptions || !Array.isArray(categoryOptions)) {
+      return {
+        series: [],
+        options: {
+          chart: {
+            type: chartType === "pie" ? "pie" : "bar",
+            height: 350,
+            fontFamily: 'Inter, sans-serif',
+            toolbar: {
+              show: false
+            }
+          },
+          noData: {
+            text: 'Loading chart data...',
+            align: 'center',
+            verticalAlign: 'middle'
+          }
+        }
+      };
+    }
     
     if (chartPeriod === "monthly") {
       // Monthly data for current year
@@ -215,28 +237,40 @@ const getExpenseStats = () => {
         monthlyData[monthName] = {};
         
         categoryOptions.forEach(cat => {
-          monthlyData[monthName][cat.value] = 0;
+          if (cat && cat.value) {
+            monthlyData[monthName][cat.value] = 0;
+          }
         });
       }
       
-      data.expenses.forEach(expense => {
-        const expenseDate = new Date(expense.date);
-        if (expenseDate.getFullYear() === currentDate.getFullYear()) {
-          const monthName = expenseDate.toLocaleString('default', { month: 'short' });
-          if (monthlyData[monthName] && monthlyData[monthName].hasOwnProperty(expense.category)) {
-            monthlyData[monthName][expense.category] += expense.amount;
+      // Process expenses with null safety
+      if (Array.isArray(data.expenses)) {
+        data.expenses.forEach(expense => {
+          if (expense && expense.date && expense.category && typeof expense.amount === 'number') {
+            const expenseDate = new Date(expense.date);
+            if (!isNaN(expenseDate.getTime()) && expenseDate.getFullYear() === currentDate.getFullYear()) {
+              const monthName = expenseDate.toLocaleString('default', { month: 'short' });
+              if (monthlyData[monthName] && monthlyData[monthName].hasOwnProperty(expense.category)) {
+                monthlyData[monthName][expense.category] += expense.amount;
+              }
+            }
           }
-        }
-      });
+        });
+      }
       
       const months = Object.keys(monthlyData);
-      const series = categoryOptions.map(cat => ({
-        name: cat.label,
-        data: months.map(month => monthlyData[month][cat.value])
-      }));
+      const series = categoryOptions
+        .filter(cat => cat && cat.value && cat.label)
+        .map(cat => ({
+          name: cat.label,
+          data: months.map(month => monthlyData[month] ? (monthlyData[month][cat.value] || 0) : 0)
+        }));
+      
+      // Prepare pie chart data with null safety
+      const pieData = stats?.categorySummary ? Object.values(stats.categorySummary).filter(val => typeof val === 'number' && val > 0) : [];
       
       return {
-        series: chartType === "pie" ? Object.values(stats.categorySummary) : series,
+        series: chartType === "pie" ? pieData : series,
         options: {
           chart: {
             type: chartType === "pie" ? "pie" : "bar",
@@ -269,7 +303,7 @@ const getExpenseStats = () => {
                     show: true,
                     label: 'Total',
                     formatter: function (w) {
-                      return formatCurrency(stats.total);
+                      return formatCurrency(stats?.total || 0);
                     }
                   }
                 }
@@ -279,7 +313,7 @@ const getExpenseStats = () => {
           dataLabels: {
             enabled: chartType === "pie",
             formatter: function(val) {
-              return val.toFixed(1) + "%";
+              return typeof val === 'number' ? val.toFixed(1) + "%" : "0%";
             }
           },
           stroke: {
@@ -288,7 +322,7 @@ const getExpenseStats = () => {
             colors: ['transparent']
           },
           xaxis: chartType === "bar" ? {
-            categories: months,
+            categories: months || [],
             labels: {
               style: {
                 colors: '#666',
@@ -299,7 +333,7 @@ const getExpenseStats = () => {
           yaxis: chartType === "bar" ? {
             labels: {
               formatter: function (val) {
-                return formatCurrency(val);
+                return formatCurrency(val || 0);
               },
               style: {
                 colors: '#666',
@@ -307,7 +341,7 @@ const getExpenseStats = () => {
               }
             }
           } : undefined,
-          labels: chartType === "pie" ? categoryOptions.map(cat => cat.label) : undefined,
+          labels: chartType === "pie" ? categoryOptions.filter(cat => cat && cat.label).map(cat => cat.label) : undefined,
           legend: {
             position: 'bottom',
             horizontalAlign: 'center',
@@ -322,7 +356,7 @@ const getExpenseStats = () => {
             theme: 'light',
             y: {
               formatter: function (val) {
-                return formatCurrency(val);
+                return formatCurrency(val || 0);
               }
             }
           },
@@ -345,7 +379,12 @@ const getExpenseStats = () => {
                 position: 'bottom'
               }
             }
-          }]
+          }],
+          noData: {
+            text: 'No data available',
+            align: 'center',
+            verticalAlign: 'middle'
+          }
         }
       };
     } else {
@@ -358,26 +397,40 @@ const getExpenseStats = () => {
         yearlyData[year] = {};
         
         categoryOptions.forEach(cat => {
-          yearlyData[year][cat.value] = 0;
+          if (cat && cat.value) {
+            yearlyData[year][cat.value] = 0;
+          }
         });
       }
       
-      data.expenses.forEach(expense => {
-        const expenseDate = new Date(expense.date);
-        const year = expenseDate.getFullYear();
-        if (yearlyData[year] && yearlyData[year].hasOwnProperty(expense.category)) {
-          yearlyData[year][expense.category] += expense.amount;
-        }
-      });
+      // Process expenses with null safety
+      if (Array.isArray(data.expenses)) {
+        data.expenses.forEach(expense => {
+          if (expense && expense.date && expense.category && typeof expense.amount === 'number') {
+            const expenseDate = new Date(expense.date);
+            if (!isNaN(expenseDate.getTime())) {
+              const year = expenseDate.getFullYear();
+              if (yearlyData[year] && yearlyData[year].hasOwnProperty(expense.category)) {
+                yearlyData[year][expense.category] += expense.amount;
+              }
+            }
+          }
+        });
+      }
       
       const years = Object.keys(yearlyData).map(String);
-      const series = categoryOptions.map(cat => ({
-        name: cat.label,
-        data: years.map(year => yearlyData[year][cat.value])
-      }));
+      const series = categoryOptions
+        .filter(cat => cat && cat.value && cat.label)
+        .map(cat => ({
+          name: cat.label,
+          data: years.map(year => yearlyData[year] ? (yearlyData[year][cat.value] || 0) : 0)
+        }));
+      
+      // Prepare pie chart data with null safety
+      const pieData = stats?.categorySummary ? Object.values(stats.categorySummary).filter(val => typeof val === 'number' && val > 0) : [];
       
       return {
-        series: chartType === "pie" ? Object.values(stats.categorySummary) : series,
+        series: chartType === "pie" ? pieData : series,
         options: {
           chart: {
             type: chartType === "pie" ? "pie" : "bar",
@@ -410,7 +463,7 @@ const getExpenseStats = () => {
                     show: true,
                     label: 'Total',
                     formatter: function (w) {
-                      return formatCurrency(stats.total);
+                      return formatCurrency(stats?.total || 0);
                     }
                   }
                 }
@@ -420,7 +473,7 @@ const getExpenseStats = () => {
           dataLabels: {
             enabled: chartType === "pie",
             formatter: function(val) {
-              return val.toFixed(1) + "%";
+              return typeof val === 'number' ? val.toFixed(1) + "%" : "0%";
             }
           },
           stroke: {
@@ -429,7 +482,7 @@ const getExpenseStats = () => {
             colors: ['transparent']
           },
           xaxis: chartType === "bar" ? {
-            categories: years,
+            categories: years || [],
             labels: {
               style: {
                 colors: '#666',
@@ -440,7 +493,7 @@ const getExpenseStats = () => {
           yaxis: chartType === "bar" ? {
             labels: {
               formatter: function (val) {
-                return formatCurrency(val);
+                return formatCurrency(val || 0);
               },
               style: {
                 colors: '#666',
@@ -448,7 +501,7 @@ const getExpenseStats = () => {
               }
             }
           } : undefined,
-          labels: chartType === "pie" ? categoryOptions.map(cat => cat.label) : undefined,
+          labels: chartType === "pie" ? categoryOptions.filter(cat => cat && cat.label).map(cat => cat.label) : undefined,
           legend: {
             position: 'bottom',
             horizontalAlign: 'center',
@@ -463,7 +516,7 @@ const getExpenseStats = () => {
             theme: 'light',
             y: {
               formatter: function (val) {
-                return formatCurrency(val);
+                return formatCurrency(val || 0);
               }
             }
           },
@@ -486,7 +539,12 @@ const getExpenseStats = () => {
                 position: 'bottom'
               }
             }
-          }]
+          }],
+          noData: {
+            text: 'No data available',
+            align: 'center',
+            verticalAlign: 'middle'
+          }
         }
       };
     }
@@ -619,14 +677,27 @@ const getExpenseStats = () => {
             {/* Chart Container */}
             <div className="bg-gray-50/50 rounded-xl p-4 min-h-[400px] flex items-center justify-center">
               {data.expenses.length > 0 ? (
-                <div className="w-full">
-                  <Chart
-                    options={getChartData().options}
-                    series={getChartData().series}
-                    type={chartType === "pie" ? "donut" : "bar"}
-                    height={350}
-                    width="100%"
-                  />
+<div className="w-full">
+                  {(() => {
+                    const chartData = getChartData();
+                    if (!chartData || !chartData.options || !chartData.series) {
+                      return (
+                        <div className="flex items-center justify-center h-350 text-gray-500">
+                          <p>Unable to load chart data</p>
+                        </div>
+                      );
+                    }
+                    
+                    return (
+                      <Chart
+                        options={chartData.options}
+                        series={chartData.series}
+                        type={chartType === "pie" ? "donut" : "bar"}
+                        height={350}
+                        width="100%"
+                      />
+                    );
+                  })()}
                 </div>
               ) : (
                 <div className="text-center py-12">
