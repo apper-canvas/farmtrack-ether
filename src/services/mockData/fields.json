@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 1,
+    "farmId": 1,
+    "name": "North Field",
+    "area": 35.2,
+    "coordinates": { "lat": 36.7783, "lng": -119.4179 },
+    "createdAt": "2024-01-15T08:30:00.000Z"
+  },
+  {
+    "Id": 2,
+    "farmId": 1,
+    "name": "South Field",
+    "area": 28.8,
+    "coordinates": { "lat": 36.7765, "lng": -119.4165 },
+    "createdAt": "2024-01-15T08:35:00.000Z"
+  },
+  {
+    "Id": 3,
+    "farmId": 1,
+    "name": "East Pasture",
+    "area": 42.5,
+    "coordinates": { "lat": 36.7798, "lng": -119.4142 },
+    "createdAt": "2024-01-15T08:40:00.000Z"
+  },
+  {
+    "Id": 4,
+    "farmId": 1,
+    "name": "West Meadow",
+    "area": 19.0,
+    "coordinates": { "lat": 36.7770, "lng": -119.4205 },
+    "createdAt": "2024-01-15T08:45:00.000Z"
+  },
+  {
+    "Id": 5,
+    "farmId": 2,
+    "name": "Main Field",
+    "area": 45.8,
+    "coordinates": { "lat": 33.8121, "lng": -117.9190 },
+    "createdAt": "2024-02-20T11:00:00.000Z"
+  },
+  {
+    "Id": 6,
+    "farmId": 2,
+    "name": "River Bottom",
+    "area": 22.5,
+    "coordinates": { "lat": 33.8108, "lng": -117.9175 },
+    "createdAt": "2024-02-20T11:05:00.000Z"
+  },
+  {
+    "Id": 7,
+    "farmId": 2,
+    "name": "Hill Side",
+    "area": 19.0,
+    "coordinates": { "lat": 33.8135, "lng": -117.9210 },
+    "createdAt": "2024-02-20T11:10:00.000Z"
+  },
+  {
+    "Id": 8,
+    "farmId": 3,
+    "name": "Section A",
+    "area": 52.3,
+    "coordinates": { "lat": 36.8485, "lng": -119.7051 },
+    "createdAt": "2024-01-10T09:30:00.000Z"
+  },
+  {
+    "Id": 9,
+    "farmId": 3,
+    "name": "Section B",
+    "area": 48.7,
+    "coordinates": { "lat": 36.8470, "lng": -119.7035 },
+    "createdAt": "2024-01-10T09:35:00.000Z"
+  },
+  {
+    "Id": 10,
+    "farmId": 3,
+    "name": "Section C",
+    "area": 38.2,
+    "coordinates": { "lat": 36.8455, "lng": -119.7068 },
+    "createdAt": "2024-01-10T09:40:00.000Z"
+  }
+]

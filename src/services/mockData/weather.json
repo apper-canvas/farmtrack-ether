@@ -1,0 +1,62 @@
+{
+  "current": {
+    "temperature": 72,
+    "condition": "sunny",
+    "humidity": 45,
+    "windSpeed": 8,
+    "visibility": 10,
+    "agriculturalAdvice": "Excellent conditions for field work. Consider applying herbicides early morning when wind is calm. Good day for harvesting grain crops."
+  },
+  "forecast": [
+    {
+      "Id": 1,
+      "date": "2024-12-08T00:00:00.000Z",
+      "high": 75,
+      "low": 52,
+      "condition": "sunny",
+      "precipitation": 0
+    },
+    {
+      "Id": 2,
+      "date": "2024-12-09T00:00:00.000Z",
+      "high": 73,
+      "low": 49,
+      "condition": "cloudy",
+      "precipitation": 10
+    },
+    {
+      "Id": 3,
+      "date": "2024-12-10T00:00:00.000Z",
+      "high": 68,
+      "low": 45,
+      "condition": "rainy",
+      "precipitation": 80
+    },
+    {
+      "Id": 4,
+      "date": "2024-12-11T00:00:00.000Z",
+      "high": 65,
+      "low": 42,
+      "condition": "cloudy",
+      "precipitation": 30
+    },
+    {
+      "Id": 5,
+      "date": "2024-12-12T00:00:00.000Z",
+      "high": 70,
+      "low": 46,
+      "condition": "sunny",
+      "precipitation": 0
+    }
+  ],
+  "alerts": [
+    {
+      "Id": 1,
+      "type": "frost_warning",
+      "title": "Frost Advisory",
+      "description": "Temperatures may drop below 32°F tonight. Protect sensitive crops.",
+      "severity": "moderate",
+      "validUntil": "2024-12-08T10:00:00.000Z"
+    }
+  ]
+}

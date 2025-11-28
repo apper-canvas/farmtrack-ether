@@ -1,0 +1,42 @@
+[
+  {
+    "Id": 1,
+    "name": "Green Valley Farm",
+    "location": "Valley View, CA",
+    "totalArea": 125.5,
+    "soilType": "Clay Loam",
+    "fieldCount": 4,
+    "activeCrops": 12,
+    "createdAt": "2024-01-15T08:00:00.000Z"
+  },
+  {
+    "Id": 2,
+    "name": "Sunset Acres",
+    "location": "Riverside County, CA",
+    "totalArea": 87.3,
+    "soilType": "Sandy Loam",
+    "fieldCount": 3,
+    "activeCrops": 8,
+    "createdAt": "2024-02-20T10:30:00.000Z"
+  },
+  {
+    "Id": 3,
+    "name": "Heritage Fields",
+    "location": "Central Valley, CA",
+    "totalArea": 203.7,
+    "soilType": "Silt Loam",
+    "fieldCount": 6,
+    "activeCrops": 18,
+    "createdAt": "2024-01-10T09:15:00.000Z"
+  },
+  {
+    "Id": 4,
+    "name": "Mountain View Ranch",
+    "location": "Fresno County, CA",
+    "totalArea": 156.2,
+    "soilType": "Clay",
+    "fieldCount": 5,
+    "activeCrops": 14,
+    "createdAt": "2024-03-05T07:45:00.000Z"
+  }
+]

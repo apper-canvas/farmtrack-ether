@@ -1,0 +1,84 @@
+[
+  {
+    "Id": 1,
+    "title": "Apply pre-emergence herbicide",
+    "description": "Spray Roundup PowerMAX on wheat field before emergence",
+    "cropId": 1,
+    "dueDate": "2024-12-15T08:00:00.000Z",
+    "priority": "high",
+    "completed": false,
+    "createdAt": "2024-11-25T10:00:00.000Z"
+  },
+  {
+    "Id": 2,
+    "title": "Harvest corn field",
+    "description": "Combine harvest when moisture content is 18-20%",
+    "cropId": 2,
+    "dueDate": "2024-12-10T06:00:00.000Z",
+    "priority": "high",
+    "completed": false,
+    "createdAt": "2024-11-30T09:00:00.000Z"
+  },
+  {
+    "Id": 3,
+    "title": "Check irrigation system",
+    "description": "Inspect drip lines and emitters in tomato field",
+    "cropId": 5,
+    "dueDate": "2024-12-08T09:00:00.000Z",
+    "priority": "medium",
+    "completed": true,
+    "completedAt": "2024-12-07T10:30:00.000Z",
+    "createdAt": "2024-11-28T08:00:00.000Z"
+  },
+  {
+    "Id": 4,
+    "title": "Monitor for aphids",
+    "description": "Scout bell pepper plants for aphid infestation",
+    "cropId": 6,
+    "dueDate": "2024-12-12T07:00:00.000Z",
+    "priority": "medium",
+    "completed": false,
+    "createdAt": "2024-11-29T11:00:00.000Z"
+  },
+  {
+    "Id": 5,
+    "title": "Apply nitrogen fertilizer",
+    "description": "Side-dress cotton with 50 lbs N/acre",
+    "cropId": 8,
+    "dueDate": "2024-12-14T08:30:00.000Z",
+    "priority": "low",
+    "completed": false,
+    "createdAt": "2024-11-27T09:30:00.000Z"
+  },
+  {
+    "Id": 6,
+    "title": "Prune almond trees",
+    "description": "Winter pruning for dormant almond trees",
+    "cropId": 7,
+    "dueDate": "2024-12-20T09:00:00.000Z",
+    "priority": "medium",
+    "completed": false,
+    "createdAt": "2024-11-26T10:00:00.000Z"
+  },
+  {
+    "Id": 7,
+    "title": "Soil testing",
+    "description": "Collect soil samples from soybean field for nutrient analysis",
+    "cropId": 3,
+    "dueDate": "2024-12-09T10:00:00.000Z",
+    "priority": "low",
+    "completed": true,
+    "completedAt": "2024-12-08T11:15:00.000Z",
+    "createdAt": "2024-11-24T08:30:00.000Z"
+  },
+  {
+    "Id": 8,
+    "title": "Weed control",
+    "description": "Mechanical cultivation between cotton rows",
+    "cropId": 8,
+    "dueDate": "2024-12-11T07:30:00.000Z",
+    "priority": "high",
+    "completed": false,
+    "createdAt": "2024-11-25T09:00:00.000Z"
+  }
+]
