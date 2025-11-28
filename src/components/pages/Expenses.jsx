@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from "react";
-import ApperIcon from "@/components/ApperIcon";
-import Button from "@/components/atoms/Button";
-import Select from "@/components/atoms/Select";
-import ExpenseCard from "@/components/organisms/ExpenseCard";
-import FloatingActionButton from "@/components/molecules/FloatingActionButton";
-import FormField from "@/components/molecules/FormField";
-import Loading from "@/components/ui/Loading";
-import ErrorView from "@/components/ui/ErrorView";
-import Empty from "@/components/ui/Empty";
+import React, { useEffect, useState } from "react";
 import { expenseService } from "@/services/api/expenseService";
 import { farmService } from "@/services/api/farmService";
 import { toast } from "react-toastify";
-import { formatCurrency, calculateTotal } from "@/utils/currencyUtils";
+import Chart from "react-apexcharts";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import ErrorView from "@/components/ui/ErrorView";
+import Empty from "@/components/ui/Empty";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import ExpenseCard from "@/components/organisms/ExpenseCard";
+import Farms from "@/components/pages/Farms";
+import FloatingActionButton from "@/components/molecules/FloatingActionButton";
+import FormField from "@/components/molecules/FormField";
+import { calculateTotal, formatCurrency } from "@/utils/currencyUtils";
 import { formatDate } from "@/utils/dateUtils";
 
 const Expenses = () => {
@@ -23,9 +25,10 @@ const Expenses = () => {
   const [error, setError] = useState("");
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [editingExpense, setEditingExpense] = useState(null);
-  const [filterCategory, setFilterCategory] = useState("all");
+const [filterCategory, setFilterCategory] = useState("all");
   const [filterFarm, setFilterFarm] = useState("all");
-
+  const [chartType, setChartType] = useState("bar");
+  const [chartPeriod, setChartPeriod] = useState("monthly");
   // Form state
   const [expenseForm, setExpenseForm] = useState({
     farmId: "",
@@ -162,7 +165,7 @@ const Expenses = () => {
     return filteredExpenses;
   };
 
-  const getExpenseStats = () => {
+const getExpenseStats = () => {
     const currentDate = new Date();
     
     const thisMonth = data.expenses.filter(expense => {
@@ -196,6 +199,297 @@ const Expenses = () => {
       total: calculateTotal(data.expenses),
       categorySummary,
     };
+  };
+
+  const getChartData = () => {
+    const stats = getExpenseStats();
+    const currentDate = new Date();
+    
+    if (chartPeriod === "monthly") {
+      // Monthly data for current year
+      const monthlyData = {};
+      
+      for (let i = 0; i < 12; i++) {
+        const monthDate = new Date(currentDate.getFullYear(), i, 1);
+        const monthName = monthDate.toLocaleString('default', { month: 'short' });
+        monthlyData[monthName] = {};
+        
+        categoryOptions.forEach(cat => {
+          monthlyData[monthName][cat.value] = 0;
+        });
+      }
+      
+      data.expenses.forEach(expense => {
+        const expenseDate = new Date(expense.date);
+        if (expenseDate.getFullYear() === currentDate.getFullYear()) {
+          const monthName = expenseDate.toLocaleString('default', { month: 'short' });
+          if (monthlyData[monthName] && monthlyData[monthName].hasOwnProperty(expense.category)) {
+            monthlyData[monthName][expense.category] += expense.amount;
+          }
+        }
+      });
+      
+      const months = Object.keys(monthlyData);
+      const series = categoryOptions.map(cat => ({
+        name: cat.label,
+        data: months.map(month => monthlyData[month][cat.value])
+      }));
+      
+      return {
+        series: chartType === "pie" ? Object.values(stats.categorySummary) : series,
+        options: {
+          chart: {
+            type: chartType === "pie" ? "pie" : "bar",
+            height: 350,
+            fontFamily: 'Inter, sans-serif',
+            animations: {
+              enabled: true,
+              easing: 'easeinout',
+              speed: 800,
+            },
+            toolbar: {
+              show: false
+            }
+          },
+          colors: ['#8BC34A', '#4CAF50', '#FFA726', '#FF9800', '#42A5F5', '#E53935', '#9C27B0'],
+          plotOptions: chartType === "bar" ? {
+            bar: {
+              horizontal: false,
+              columnWidth: '55%',
+              endingShape: 'rounded',
+              borderRadius: 4,
+            }
+          } : {
+            pie: {
+              donut: {
+                size: '45%',
+                labels: {
+                  show: true,
+                  total: {
+                    show: true,
+                    label: 'Total',
+                    formatter: function (w) {
+                      return formatCurrency(stats.total);
+                    }
+                  }
+                }
+              }
+            }
+          },
+          dataLabels: {
+            enabled: chartType === "pie",
+            formatter: function(val) {
+              return val.toFixed(1) + "%";
+            }
+          },
+          stroke: {
+            show: true,
+            width: chartType === "pie" ? 0 : 2,
+            colors: ['transparent']
+          },
+          xaxis: chartType === "bar" ? {
+            categories: months,
+            labels: {
+              style: {
+                colors: '#666',
+                fontSize: '12px'
+              }
+            }
+          } : undefined,
+          yaxis: chartType === "bar" ? {
+            labels: {
+              formatter: function (val) {
+                return formatCurrency(val);
+              },
+              style: {
+                colors: '#666',
+                fontSize: '12px'
+              }
+            }
+          } : undefined,
+          labels: chartType === "pie" ? categoryOptions.map(cat => cat.label) : undefined,
+          legend: {
+            position: 'bottom',
+            horizontalAlign: 'center',
+            fontSize: '12px',
+            markers: {
+              width: 8,
+              height: 8,
+              radius: 4
+            }
+          },
+          tooltip: {
+            theme: 'light',
+            y: {
+              formatter: function (val) {
+                return formatCurrency(val);
+              }
+            }
+          },
+          grid: chartType === "bar" ? {
+            borderColor: '#f1f5f9',
+            strokeDashArray: 4,
+            xaxis: {
+              lines: {
+                show: false
+              }
+            }
+          } : undefined,
+          responsive: [{
+            breakpoint: 768,
+            options: {
+              chart: {
+                height: 300
+              },
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }]
+        }
+      };
+    } else {
+      // Yearly data for last 5 years
+      const yearlyData = {};
+      const startYear = currentDate.getFullYear() - 4;
+      
+      for (let i = 0; i < 5; i++) {
+        const year = startYear + i;
+        yearlyData[year] = {};
+        
+        categoryOptions.forEach(cat => {
+          yearlyData[year][cat.value] = 0;
+        });
+      }
+      
+      data.expenses.forEach(expense => {
+        const expenseDate = new Date(expense.date);
+        const year = expenseDate.getFullYear();
+        if (yearlyData[year] && yearlyData[year].hasOwnProperty(expense.category)) {
+          yearlyData[year][expense.category] += expense.amount;
+        }
+      });
+      
+      const years = Object.keys(yearlyData).map(String);
+      const series = categoryOptions.map(cat => ({
+        name: cat.label,
+        data: years.map(year => yearlyData[year][cat.value])
+      }));
+      
+      return {
+        series: chartType === "pie" ? Object.values(stats.categorySummary) : series,
+        options: {
+          chart: {
+            type: chartType === "pie" ? "pie" : "bar",
+            height: 350,
+            fontFamily: 'Inter, sans-serif',
+            animations: {
+              enabled: true,
+              easing: 'easeinout',
+              speed: 800,
+            },
+            toolbar: {
+              show: false
+            }
+          },
+          colors: ['#8BC34A', '#4CAF50', '#FFA726', '#FF9800', '#42A5F5', '#E53935', '#9C27B0'],
+          plotOptions: chartType === "bar" ? {
+            bar: {
+              horizontal: false,
+              columnWidth: '55%',
+              endingShape: 'rounded',
+              borderRadius: 4,
+            }
+          } : {
+            pie: {
+              donut: {
+                size: '45%',
+                labels: {
+                  show: true,
+                  total: {
+                    show: true,
+                    label: 'Total',
+                    formatter: function (w) {
+                      return formatCurrency(stats.total);
+                    }
+                  }
+                }
+              }
+            }
+          },
+          dataLabels: {
+            enabled: chartType === "pie",
+            formatter: function(val) {
+              return val.toFixed(1) + "%";
+            }
+          },
+          stroke: {
+            show: true,
+            width: chartType === "pie" ? 0 : 2,
+            colors: ['transparent']
+          },
+          xaxis: chartType === "bar" ? {
+            categories: years,
+            labels: {
+              style: {
+                colors: '#666',
+                fontSize: '12px'
+              }
+            }
+          } : undefined,
+          yaxis: chartType === "bar" ? {
+            labels: {
+              formatter: function (val) {
+                return formatCurrency(val);
+              },
+              style: {
+                colors: '#666',
+                fontSize: '12px'
+              }
+            }
+          } : undefined,
+          labels: chartType === "pie" ? categoryOptions.map(cat => cat.label) : undefined,
+          legend: {
+            position: 'bottom',
+            horizontalAlign: 'center',
+            fontSize: '12px',
+            markers: {
+              width: 8,
+              height: 8,
+              radius: 4
+            }
+          },
+          tooltip: {
+            theme: 'light',
+            y: {
+              formatter: function (val) {
+                return formatCurrency(val);
+              }
+            }
+          },
+          grid: chartType === "bar" ? {
+            borderColor: '#f1f5f9',
+            strokeDashArray: 4,
+            xaxis: {
+              lines: {
+                show: false
+              }
+            }
+          } : undefined,
+          responsive: [{
+            breakpoint: 768,
+            options: {
+              chart: {
+                height: 300
+              },
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }]
+        }
+      };
+    }
   };
 
   const categoryOptions = [
@@ -249,7 +543,143 @@ const Expenses = () => {
         </div>
       </div>
 
-      <div className="p-6">
+<div className="p-6">
+        {/* Chart Visualization Section */}
+        <div className="mb-8 bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+          <div className="bg-gradient-to-r from-primary-500 to-secondary-500 px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="bg-white/20 p-2 rounded-lg">
+                  <ApperIcon name="BarChart3" className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-white">Expense Analytics</h2>
+                  <p className="text-white/80 text-sm">Visualize spending by category</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="p-6">
+            {/* Chart Controls */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Chart Type:</label>
+                <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+                  <button
+                    onClick={() => setChartType("bar")}
+                    className={`px-3 py-2 text-sm font-medium transition-colors ${
+                      chartType === "bar"
+                        ? "bg-primary-500 text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    <ApperIcon name="BarChart3" className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => setChartType("pie")}
+                    className={`px-3 py-2 text-sm font-medium transition-colors ${
+                      chartType === "pie"
+                        ? "bg-primary-500 text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    <ApperIcon name="PieChart" className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <label className="text-sm font-medium text-gray-700 whitespace-nowrap">Period:</label>
+                <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+                  <button
+                    onClick={() => setChartPeriod("monthly")}
+                    className={`px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
+                      chartPeriod === "monthly"
+                        ? "bg-primary-500 text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    Monthly
+                  </button>
+                  <button
+                    onClick={() => setChartPeriod("yearly")}
+                    className={`px-3 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
+                      chartPeriod === "yearly"
+                        ? "bg-primary-500 text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-50"
+                    }`}
+                  >
+                    Yearly
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Chart Container */}
+            <div className="bg-gray-50/50 rounded-xl p-4 min-h-[400px] flex items-center justify-center">
+              {data.expenses.length > 0 ? (
+                <div className="w-full">
+                  <Chart
+                    options={getChartData().options}
+                    series={getChartData().series}
+                    type={chartType === "pie" ? "donut" : "bar"}
+                    height={350}
+                    width="100%"
+                  />
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="bg-gray-100 rounded-full p-4 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                    <ApperIcon name="BarChart3" className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">No Data Available</h3>
+<p className="text-gray-600 text-sm mb-4">Add some expenses to see your spending analytics</p>
+                  <Button
+                    onClick={() => {
+                      resetExpenseForm();
+                      setShowExpenseModal(true);
+                    }}
+                    className="inline-flex items-center space-x-2"
+                  >
+                    <ApperIcon name="Plus" className="w-4 h-4" />
+                    <span>Add Expense</span>
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Chart Summary Stats */}
+            {data.expenses.length > 0 && (
+              <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-primary-700">
+                    {formatCurrency(getExpenseStats().thisMonth)}
+                  </div>
+                  <div className="text-sm text-gray-600 mt-1">This Month</div>
+                </div>
+                <div className="bg-gradient-to-r from-secondary-50 to-primary-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-secondary-700">
+                    {formatCurrency(getExpenseStats().lastMonth)}
+                  </div>
+                  <div className="text-sm text-gray-600 mt-1">Last Month</div>
+                </div>
+                <div className="bg-gradient-to-r from-accent-50 to-primary-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-accent-700">
+                    {formatCurrency(getExpenseStats().thisYear)}
+                  </div>
+                  <div className="text-sm text-gray-600 mt-1">This Year</div>
+                </div>
+                <div className="bg-gradient-to-r from-gray-50 to-primary-50 rounded-lg p-4 text-center">
+                  <div className="text-2xl font-bold text-gray-700">
+                    {Object.keys(getExpenseStats().categorySummary).length}
+                  </div>
+                  <div className="text-sm text-gray-600 mt-1">Categories</div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
         {/* Stats Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-xl shadow-card border border-gray-100 p-4">
@@ -317,11 +747,10 @@ const Expenses = () => {
                     {formatCurrency(amount)}
                   </span>
                 </div>
-              ))}
+))}
             </div>
           </div>
         )}
-
         {/* Filters */}
         <div className="bg-white rounded-xl shadow-card border border-gray-100 p-6 mb-6">
           <div className="flex items-center space-x-4">
