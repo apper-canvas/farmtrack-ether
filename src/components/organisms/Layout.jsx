@@ -17,6 +17,11 @@ const SidebarNavigation = () => {
       icon: "MapPin",
     },
 {
+      name: "Crops",
+      href: "crops",
+      icon: "Wheat",
+    },
+    {
       name: "Tasks",
       href: "tasks", 
       icon: "CheckSquare",
