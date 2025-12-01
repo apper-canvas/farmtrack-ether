@@ -206,29 +206,52 @@ const getFilteredExpenses = () => {
   };
 
 const getExpenseStats = () => {
+    // Defensive validation to prevent undefined access
+    if (!data || !data.expenses || !Array.isArray(data.expenses)) {
+      return {
+        thisMonth: 0,
+        lastMonth: 0,
+        thisYear: 0,
+        total: 0,
+        categorySummary: {}
+      };
+    }
+    
     const currentDate = new Date();
     
     const thisMonth = data.expenses.filter(expense => {
+      if (!expense || !expense.date) return false;
       const expenseDate = new Date(expense.date);
-      return expenseDate.getMonth() === currentDate.getMonth() &&
+      return !isNaN(expenseDate.getTime()) && 
+             expenseDate.getMonth() === currentDate.getMonth() &&
              expenseDate.getFullYear() === currentDate.getFullYear();
     });
     
     const lastMonth = data.expenses.filter(expense => {
+      if (!expense || !expense.date) return false;
       const expenseDate = new Date(expense.date);
       const lastMonthDate = new Date(currentDate.getFullYear(), currentDate.getMonth() - 1);
-      return expenseDate.getMonth() === lastMonthDate.getMonth() &&
+      return !isNaN(expenseDate.getTime()) && 
+             expenseDate.getMonth() === lastMonthDate.getMonth() &&
              expenseDate.getFullYear() === lastMonthDate.getFullYear();
     });
     
     const thisYear = data.expenses.filter(expense => {
+      if (!expense || !expense.date) return false;
       const expenseDate = new Date(expense.date);
-      return expenseDate.getFullYear() === currentDate.getFullYear();
+      return !isNaN(expenseDate.getTime()) && 
+             expenseDate.getFullYear() === currentDate.getFullYear();
     });
     
     const categorySummary = data.expenses.reduce((acc, expense) => {
-      const category = expense.category;
-      acc[category] = (acc[category] || 0) + expense.amount;
+      if (expense && 
+          expense.category && 
+          typeof expense.category === 'string' && 
+          typeof expense.amount === 'number' && 
+          !isNaN(expense.amount)) {
+        const category = expense.category;
+        acc[category] = (acc[category] || 0) + expense.amount;
+      }
       return acc;
     }, {});
     
