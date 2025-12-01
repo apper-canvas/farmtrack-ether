@@ -22,7 +22,7 @@ const FormField = ({
 }) => {
   const renderInput = () => {
     switch (type) {
-      case "select":
+case "select":
         return (
           <Select
             name={name}
@@ -34,11 +34,14 @@ const FormField = ({
             {...props}
           >
             <option value="">Select {label?.toLowerCase() || "option"}</option>
-            {options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
+            {options.length > 0 
+              ? options.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))
+              : props.children
+            }
           </Select>
         );
       case "textarea":

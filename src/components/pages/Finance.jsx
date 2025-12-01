@@ -350,17 +350,18 @@ function Finance() {
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
-                <FormField
+<FormField
                   label="Transaction Type"
                   type="select"
                   name="type"
                   value={formData.type}
                   onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value, category: '' }))}
+                  options={[
+                    { value: 'expense', label: 'Expense' },
+                    { value: 'income', label: 'Income' }
+                  ]}
                   required
-                >
-                  <option value="expense">Expense</option>
-                  <option value="income">Income</option>
-                </FormField>
+                />
 
                 <FormField
                   label="Amount ($)"
