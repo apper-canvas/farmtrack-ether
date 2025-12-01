@@ -1,22 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ApperIcon from "@/components/ApperIcon";
-import StatCard from "@/components/molecules/StatCard";
-import TaskCard from "@/components/organisms/TaskCard";
-import WeatherCard from "@/components/organisms/WeatherCard";
-import FloatingActionButton from "@/components/molecules/FloatingActionButton";
-import Button from "@/components/atoms/Button";
-import Loading from "@/components/ui/Loading";
-import ErrorView from "@/components/ui/ErrorView";
-import Empty from "@/components/ui/Empty";
 import { farmService } from "@/services/api/farmService";
 import { cropService } from "@/services/api/cropService";
 import { taskService } from "@/services/api/taskService";
-import { expenseService } from "@/services/api/expenseService";
 import { weatherService } from "@/services/api/weatherService";
 import { toast } from "react-toastify";
-import { formatCurrency, calculateTotal } from "@/utils/currencyUtils";
-import { isOverdue, isDueSoon } from "@/utils/dateUtils";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import ErrorView from "@/components/ui/ErrorView";
+import Empty from "@/components/ui/Empty";
+import Button from "@/components/atoms/Button";
+import WeatherCard from "@/components/organisms/WeatherCard";
+import TaskCard from "@/components/organisms/TaskCard";
+import Tasks from "@/components/pages/Tasks";
+import Farms from "@/components/pages/Farms";
+import StatCard from "@/components/molecules/StatCard";
+import FloatingActionButton from "@/components/molecules/FloatingActionButton";
+import { calculateTotal, formatCurrency } from "@/utils/currencyUtils";
+import { isDueSoon, isOverdue } from "@/utils/dateUtils";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const Dashboard = () => {
     crops: [],
     tasks: [],
     expenses: [],
-    weather: null,
+weather: null
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -39,15 +40,14 @@ const Dashboard = () => {
     setError("");
     
     try {
-      const [farms, crops, tasks, expenses, weather] = await Promise.all([
+const [farms, crops, tasks, weather] = await Promise.all([
         farmService.getAll(),
         cropService.getAll(),
         taskService.getAll(),
-        expenseService.getAll(),
         weatherService.getCurrentWeather(),
       ]);
 
-      setData({ farms, crops, tasks, expenses, weather });
+setData({ farms, crops, tasks, weather });
     } catch (err) {
       console.error("Failed to load dashboard data:", err);
       setError("Failed to load dashboard data. Please try again.");
@@ -74,7 +74,7 @@ const Dashboard = () => {
     }
   };
 
-  const getStatsData = () => {
+const getStatsData = () => {
     const totalFarms = data.farms.length;
     const activeCrops = data.crops.filter(crop => 
       crop.status !== "harvested"
@@ -85,19 +85,12 @@ const Dashboard = () => {
       !task.completed && isOverdue(task.dueDate)
     ).length;
     
-    const thisMonthExpenses = data.expenses.filter(expense => {
-      const expenseDate = new Date(expense.date);
-      const thisMonth = new Date();
-      return expenseDate.getMonth() === thisMonth.getMonth() &&
-             expenseDate.getFullYear() === thisMonth.getFullYear();
-    });
-    
     return {
       totalFarms,
       activeCrops,
       pendingTasks,
       overdueTasks,
-      monthlyExpenses: calculateTotal(thisMonthExpenses),
+      activeTasks: data.tasks?.filter(task => task.status === "pending").length || 0,
     };
   };
 
@@ -187,15 +180,13 @@ const Dashboard = () => {
             iconBackground={stats.overdueTasks > 0 ? "bg-red-100" : "bg-accent-100"}
             onClick={() => navigate("/tasks")}
           />
-          
-          <StatCard
-            title="This Month"
-            value={formatCurrency(stats.monthlyExpenses)}
-            subtitle="Total expenses"
-            icon="DollarSign"
+<StatCard
+            title="Active Tasks"
+            value={stats.activeTasks}
+            icon="Calendar"
             iconColor="text-green-600"
             iconBackground="bg-green-100"
-            onClick={() => navigate("/expenses")}
+            onClick={() => navigate("/tasks")}
           />
           
           <StatCard
@@ -286,14 +277,6 @@ const Dashboard = () => {
                   Create Task
                 </Button>
                 
-                <Button
-                  onClick={() => navigate("/expenses")}
-                  variant="outline"
-                  className="w-full justify-start"
-                >
-                  <ApperIcon name="DollarSign" className="h-5 w-5 mr-3" />
-                  Record Expense
-                </Button>
                 
                 <Button
                   onClick={() => navigate("/weather")}
@@ -331,14 +314,12 @@ const Dashboard = () => {
               <ApperIcon name="AlertCircle" className="h-8 w-8 text-accent-600 mx-auto mb-2" />
               <div className="text-2xl font-bold text-gray-900">{stats.overdueTasks}</div>
               <div className="text-sm text-gray-600">Overdue Tasks</div>
-            </div>
+</div>
             
-            <div className="text-center p-4 bg-green-50 rounded-lg">
-              <ApperIcon name="TrendingUp" className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">
-                {formatCurrency(stats.monthlyExpenses)}
-              </div>
-              <div className="text-sm text-gray-600">Monthly Expenses</div>
+            <div className="text-center p-4 bg-blue-50 rounded-lg">
+              <ApperIcon name="Calendar" className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-gray-900">{stats.activeTasks}</div>
+              <div className="text-sm text-gray-600">Active Tasks</div>
             </div>
           </div>
         </div>

@@ -1,15 +1,13 @@
 import { createBrowserRouter } from "react-router-dom";
-import { Suspense, lazy } from "react";
+import React, { Suspense, lazy } from "react";
 import Layout from "@/components/organisms/Layout";
 
 // Lazy load all page components
 const Dashboard = lazy(() => import("@/components/pages/Dashboard"));
 const Farms = lazy(() => import("@/components/pages/Farms"));
 const Tasks = lazy(() => import("@/components/pages/Tasks"));
-const Expenses = lazy(() => import("@/components/pages/Expenses"));
 const Weather = lazy(() => import("@/components/pages/Weather"));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
-
 const loadingFallback = (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sage-50 to-primary-100">
     <div className="text-center space-y-4">
@@ -46,15 +44,7 @@ const mainRoutes = [
         <Tasks />
       </Suspense>
     ),
-  },
-  {
-    path: "expenses",
-    element: (
-      <Suspense fallback={loadingFallback}>
-        <Expenses />
-      </Suspense>
-    ),
-  },
+},
   {
     path: "weather",
     element: (

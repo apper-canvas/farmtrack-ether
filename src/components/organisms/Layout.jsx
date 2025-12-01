@@ -15,15 +15,10 @@ const SidebarNavigation = () => {
       href: "farms",
       icon: "MapPin",
     },
-    {
+{
       name: "Tasks",
       href: "tasks", 
       icon: "CheckSquare",
-    },
-    {
-      name: "Expenses",
-      href: "expenses",
-      icon: "DollarSign",
     },
     {
       name: "Weather",
