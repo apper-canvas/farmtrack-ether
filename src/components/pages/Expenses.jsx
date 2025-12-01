@@ -242,11 +242,8 @@ const getExpenseStats = () => {
   };
 
 const getChartData = () => {
-    const stats = getExpenseStats();
-    const currentDate = new Date();
-    
-    // Ensure we have valid data and categoryOptions
-    if (!data?.expenses || !Array.isArray(data.expenses) || !categoryOptions || !Array.isArray(categoryOptions)) {
+    // Early validation - prevent null reference errors
+    if (!data || !data.expenses || !Array.isArray(data.expenses)) {
       return {
         series: [],
         options: {
@@ -254,12 +251,53 @@ const getChartData = () => {
             type: chartType === "pie" ? "pie" : "bar",
             height: 350,
             fontFamily: 'Inter, sans-serif',
-            toolbar: {
-              show: false
-            }
+            toolbar: { show: false }
           },
           noData: {
-            text: 'Loading chart data...',
+            text: 'No expense data available',
+            align: 'center',
+            verticalAlign: 'middle'
+          }
+        }
+      };
+    }
+
+    // Validate categoryOptions exists and has valid structure
+    if (!categoryOptions || !Array.isArray(categoryOptions) || categoryOptions.length === 0) {
+      return {
+        series: [],
+        options: {
+          chart: {
+            type: chartType === "pie" ? "pie" : "bar",
+            height: 350,
+            fontFamily: 'Inter, sans-serif',
+            toolbar: { show: false }
+          },
+          noData: {
+            text: 'Invalid category configuration',
+            align: 'center',
+            verticalAlign: 'middle'
+          }
+        }
+      };
+    }
+
+    const stats = getExpenseStats();
+    const currentDate = new Date();
+    
+    // Additional safety check for stats
+    if (!stats || typeof stats !== 'object') {
+      return {
+        series: [],
+        options: {
+          chart: {
+            type: chartType === "pie" ? "pie" : "bar",
+            height: 350,
+            fontFamily: 'Inter, sans-serif',
+            toolbar: { show: false }
+          },
+          noData: {
+            text: 'Unable to calculate expense statistics',
             align: 'center',
             verticalAlign: 'middle'
           }
@@ -271,26 +309,40 @@ const getChartData = () => {
       // Monthly data for current year
       const monthlyData = {};
       
+      // Initialize monthly data structure with safety checks
       for (let i = 0; i < 12; i++) {
         const monthDate = new Date(currentDate.getFullYear(), i, 1);
         const monthName = monthDate.toLocaleString('default', { month: 'short' });
         monthlyData[monthName] = {};
         
+        // Validate each category before adding to monthlyData
         categoryOptions.forEach(cat => {
-          if (cat && cat.value) {
+          if (cat && typeof cat === 'object' && cat.value && typeof cat.value === 'string') {
             monthlyData[monthName][cat.value] = 0;
           }
         });
       }
       
-      // Process expenses with null safety
-      if (Array.isArray(data.expenses)) {
+      // Process expenses with comprehensive validation
+      if (Array.isArray(data.expenses) && data.expenses.length > 0) {
         data.expenses.forEach(expense => {
-          if (expense && expense.date && expense.category && typeof expense.amount === 'number') {
+          // Validate expense object structure completely
+          if (expense && 
+              typeof expense === 'object' && 
+              expense.date && 
+              expense.category && 
+              typeof expense.category === 'string' && 
+              typeof expense.amount === 'number' && 
+              !isNaN(expense.amount)) {
+            
             const expenseDate = new Date(expense.date);
             if (!isNaN(expenseDate.getTime()) && expenseDate.getFullYear() === currentDate.getFullYear()) {
               const monthName = expenseDate.toLocaleString('default', { month: 'short' });
-              if (monthlyData[monthName] && monthlyData[monthName].hasOwnProperty(expense.category)) {
+              
+              // Double-check monthlyData structure before accessing
+              if (monthlyData[monthName] && 
+                  typeof monthlyData[monthName] === 'object' && 
+                  monthlyData[monthName].hasOwnProperty(expense.category)) {
                 monthlyData[monthName][expense.category] += expense.amount;
               }
             }
@@ -299,15 +351,46 @@ const getChartData = () => {
       }
       
       const months = Object.keys(monthlyData);
+      
+      // Validate months array before proceeding
+      if (!Array.isArray(months) || months.length === 0) {
+        return {
+          series: [],
+          options: {
+            chart: {
+              type: chartType === "pie" ? "pie" : "bar",
+              height: 350,
+              fontFamily: 'Inter, sans-serif',
+              toolbar: { show: false }
+            },
+            noData: {
+              text: 'No monthly data available',
+              align: 'center',
+              verticalAlign: 'middle'
+            }
+          }
+        };
+      }
+      
       const series = categoryOptions
-        .filter(cat => cat && cat.value && cat.label)
+        .filter(cat => cat && typeof cat === 'object' && cat.value && cat.label && typeof cat.value === 'string' && typeof cat.label === 'string')
         .map(cat => ({
           name: cat.label,
-          data: months.map(month => monthlyData[month] ? (monthlyData[month][cat.value] || 0) : 0)
+          data: months.map(month => {
+            // Additional safety for data access
+            if (monthlyData[month] && typeof monthlyData[month] === 'object') {
+              const value = monthlyData[month][cat.value];
+              return typeof value === 'number' && !isNaN(value) ? value : 0;
+            }
+            return 0;
+          })
         }));
       
       // Prepare pie chart data with null safety
-      const pieData = stats?.categorySummary ? Object.values(stats.categorySummary).filter(val => typeof val === 'number' && val > 0) : [];
+// Prepare pie chart data with enhanced null safety
+      const pieData = (stats && stats.categorySummary && typeof stats.categorySummary === 'object') 
+        ? Object.values(stats.categorySummary).filter(val => typeof val === 'number' && !isNaN(val) && val > 0) 
+        : [];
       
       return {
         series: chartType === "pie" ? pieData : series,
@@ -466,8 +549,10 @@ const getChartData = () => {
           data: years.map(year => yearlyData[year] ? (yearlyData[year][cat.value] || 0) : 0)
         }));
       
-      // Prepare pie chart data with null safety
-      const pieData = stats?.categorySummary ? Object.values(stats.categorySummary).filter(val => typeof val === 'number' && val > 0) : [];
+// Prepare pie chart data with enhanced null safety
+      const pieData = (stats && stats.categorySummary && typeof stats.categorySummary === 'object') 
+        ? Object.values(stats.categorySummary).filter(val => typeof val === 'number' && !isNaN(val) && val > 0) 
+        : [];
       
       return {
         series: chartType === "pie" ? pieData : series,
@@ -706,17 +791,40 @@ return <ErrorView error={error} onRetry={loadData} />;
 
             {/* Chart Container */}
             <div className="bg-gray-50/50 rounded-xl p-4 min-h-[400px] flex items-center justify-center">
-              {data.expenses.length > 0 ? (
-<div className="w-full">
+{data.expenses.length > 0 ? (
+                <div className="w-full">
                   {(() => {
-                    const chartData = getChartData();
-                    if (!chartData || !chartData.options || !chartData.series) {
-                      return (
-                        <div className="flex items-center justify-center h-350 text-gray-500">
-                          <p>Unable to load chart data</p>
-                        </div>
-                      );
-                    }
+                    try {
+                      const chartData = getChartData();
+                      
+                      // Comprehensive validation of chart data structure
+                      if (!chartData || 
+                          typeof chartData !== 'object' || 
+                          !chartData.options || 
+                          !chartData.series ||
+                          typeof chartData.options !== 'object') {
+                        return (
+                          <div className="flex items-center justify-center h-96 text-gray-500">
+                            <div className="text-center">
+                              <ApperIcon name="AlertTriangle" className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                              <p>Unable to load chart data</p>
+                              <p className="text-xs text-gray-400 mt-1">Please try refreshing the page</p>
+                            </div>
+                          </div>
+                        );
+                      }
+
+                      // Validate series data structure
+                      if (!Array.isArray(chartData.series)) {
+                        return (
+                          <div className="flex items-center justify-center h-96 text-gray-500">
+                            <div className="text-center">
+                              <ApperIcon name="AlertTriangle" className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                              <p>Invalid chart series data</p>
+                            </div>
+                          </div>
+                        );
+                      }
                     
                     return (
                       <Chart
@@ -724,9 +832,21 @@ return <ErrorView error={error} onRetry={loadData} />;
                         series={chartData.series}
                         type={chartType === "pie" ? "donut" : "bar"}
                         height={350}
-                        width="100%"
+width="100%"
                       />
                     );
+                    } catch (chartError) {
+                      console.error('Chart rendering error:', chartError);
+                      return (
+                        <div className="flex items-center justify-center h-96 text-gray-500">
+                          <div className="text-center">
+                            <ApperIcon name="AlertTriangle" className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                            <p>Chart failed to load</p>
+                            <p className="text-xs text-gray-400 mt-1">Please refresh the page</p>
+                          </div>
+                        </div>
+                      );
+                    }
                   })()}
                 </div>
               ) : (
