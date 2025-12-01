@@ -1,0 +1,162 @@
+[
+  {
+    "Id": 1,
+    "name": "Miguel Rodriguez",
+    "role": "Farm Manager",
+    "email": "miguel@farmtrack.com",
+    "phone": "+1 (555) 234-5678",
+    "hourlyRate": 25.00,
+    "status": "available",
+    "skills": ["Equipment Operation", "Crop Management", "Team Leadership"],
+    "hireDate": "2023-01-15",
+    "totalHoursWorked": 1250,
+    "currentTasks": [1, 3],
+    "certifications": ["Pesticide Applicator", "Heavy Equipment"],
+    "emergencyContact": {
+      "name": "Rosa Rodriguez",
+      "phone": "+1 (555) 234-5679"
+    },
+    "createdAt": "2024-01-15T08:00:00Z",
+    "updatedAt": "2024-01-20T14:30:00Z"
+  },
+  {
+    "Id": 2,
+    "name": "Sarah Johnson",
+    "role": "Field Worker",
+    "email": "sarah@farmtrack.com",
+    "phone": "+1 (555) 345-6789",
+    "hourlyRate": 18.50,
+    "status": "working",
+    "skills": ["Planting", "Harvesting", "Irrigation"],
+    "hireDate": "2023-03-20",
+    "totalHoursWorked": 890,
+    "currentTasks": [2],
+    "certifications": ["First Aid"],
+    "emergencyContact": {
+      "name": "Mark Johnson",
+      "phone": "+1 (555) 345-6790"
+    },
+    "createdAt": "2024-03-20T09:15:00Z",
+    "updatedAt": "2024-01-20T16:45:00Z"
+  },
+  {
+    "Id": 3,
+    "name": "Carlos Mendez",
+    "role": "Equipment Operator",
+    "email": "carlos@farmtrack.com",
+    "phone": "+1 (555) 456-7890",
+    "hourlyRate": 22.00,
+    "status": "available",
+    "skills": ["Tractor Operation", "Maintenance", "Irrigation Systems"],
+    "hireDate": "2023-02-10",
+    "totalHoursWorked": 1100,
+    "currentTasks": [4],
+    "certifications": ["CDL", "Heavy Equipment", "Hydraulics"],
+    "emergencyContact": {
+      "name": "Maria Mendez",
+      "phone": "+1 (555) 456-7891"
+    },
+    "createdAt": "2024-02-10T07:30:00Z",
+    "updatedAt": "2024-01-20T11:20:00Z"
+  },
+  {
+    "Id": 4,
+    "name": "Jennifer Chen",
+    "role": "Agronomist",
+    "email": "jennifer@farmtrack.com",
+    "phone": "+1 (555) 567-8901",
+    "hourlyRate": 35.00,
+    "status": "available",
+    "skills": ["Soil Analysis", "Crop Planning", "Pest Management"],
+    "hireDate": "2023-04-05",
+    "totalHoursWorked": 720,
+    "currentTasks": [],
+    "certifications": ["Certified Crop Advisor", "Soil Scientist"],
+    "emergencyContact": {
+      "name": "David Chen",
+      "phone": "+1 (555) 567-8902"
+    },
+    "createdAt": "2024-04-05T10:00:00Z",
+    "updatedAt": "2024-01-20T13:15:00Z"
+  },
+  {
+    "Id": 5,
+    "name": "Robert Wilson",
+    "role": "Field Worker",
+    "email": "robert@farmtrack.com",
+    "phone": "+1 (555) 678-9012",
+    "hourlyRate": 17.00,
+    "status": "on_leave",
+    "skills": ["Manual Labor", "Harvesting", "Packaging"],
+    "hireDate": "2023-05-12",
+    "totalHoursWorked": 650,
+    "currentTasks": [],
+    "certifications": [],
+    "emergencyContact": {
+      "name": "Linda Wilson",
+      "phone": "+1 (555) 678-9013"
+    },
+    "createdAt": "2024-05-12T08:45:00Z",
+    "updatedAt": "2024-01-18T09:30:00Z"
+  },
+  {
+    "Id": 6,
+    "name": "Anna Kowalski",
+    "role": "Quality Inspector",
+    "email": "anna@farmtrack.com",
+    "phone": "+1 (555) 789-0123",
+    "hourlyRate": 24.00,
+    "status": "available",
+    "skills": ["Quality Control", "Documentation", "Safety Inspection"],
+    "hireDate": "2023-06-01",
+    "totalHoursWorked": 580,
+    "currentTasks": [5],
+    "certifications": ["HACCP", "Organic Inspector"],
+    "emergencyContact": {
+      "name": "Peter Kowalski",
+      "phone": "+1 (555) 789-0124"
+    },
+    "createdAt": "2024-06-01T11:30:00Z",
+    "updatedAt": "2024-01-20T15:00:00Z"
+  },
+  {
+    "Id": 7,
+    "name": "James Thompson",
+    "role": "Maintenance Tech",
+    "email": "james@farmtrack.com",
+    "phone": "+1 (555) 890-1234",
+    "hourlyRate": 26.00,
+    "status": "working",
+    "skills": ["Equipment Repair", "Electrical", "Welding"],
+    "hireDate": "2023-01-30",
+    "totalHoursWorked": 1180,
+    "currentTasks": [6],
+    "certifications": ["Electrical License", "Welding Certification"],
+    "emergencyContact": {
+      "name": "Mary Thompson",
+      "phone": "+1 (555) 890-1235"
+    },
+    "createdAt": "2024-01-30T07:00:00Z",
+    "updatedAt": "2024-01-20T12:45:00Z"
+  },
+  {
+    "Id": 8,
+    "name": "Lisa Garcia",
+    "role": "Field Worker",
+    "email": "lisa@farmtrack.com",
+    "phone": "+1 (555) 901-2345",
+    "hourlyRate": 19.00,
+    "status": "available",
+    "skills": ["Planting", "Weeding", "Data Collection"],
+    "hireDate": "2023-07-15",
+    "totalHoursWorked": 420,
+    "currentTasks": [],
+    "certifications": ["Organic Handling"],
+    "emergencyContact": {
+      "name": "Manuel Garcia",
+      "phone": "+1 (555) 901-2346"
+    },
+    "createdAt": "2024-07-15T09:20:00Z",
+    "updatedAt": "2024-01-20T14:10:00Z"
+  }
+]
