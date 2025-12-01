@@ -71,3 +71,46 @@ export const isDueSoon = (dueDate, daysThreshold = 3) => {
   const threshold = addDays(new Date(), daysThreshold);
   return due <= threshold && !isPast(due);
 };
+
+export const getMonthName = (monthIndex) => {
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  return months[monthIndex] || "";
+};
+
+export const getCurrentMonth = () => {
+  const now = new Date();
+  return {
+    month: now.getMonth(),
+    year: now.getFullYear(),
+    name: getMonthName(now.getMonth())
+  };
+};
+
+export const filterByMonth = (items, month, year, dateField = 'date') => {
+  if (!Array.isArray(items)) return [];
+  
+  return items.filter(item => {
+    const itemDate = new Date(item[dateField]);
+    return itemDate.getMonth() === month && itemDate.getFullYear() === year;
+  });
+};
+
+export const getLastNMonths = (n = 6) => {
+  const months = [];
+  const now = new Date();
+  
+  for (let i = n - 1; i >= 0; i--) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({
+      month: date.getMonth(),
+      year: date.getFullYear(),
+      name: getMonthName(date.getMonth()),
+      short: getMonthName(date.getMonth()).substring(0, 3)
+    });
+  }
+  
+  return months;
+};

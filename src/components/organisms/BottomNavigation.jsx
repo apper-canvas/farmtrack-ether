@@ -22,7 +22,12 @@ const BottomNavigation = () => {
     {
       name: "Weather",
       href: "weather",
-      icon: "Cloud",
+icon: "Cloud",
+    },
+    {
+      name: "Finance",
+      path: "/finance",
+      icon: "DollarSign",
     },
   ];
 

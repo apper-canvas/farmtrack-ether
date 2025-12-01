@@ -24,6 +24,11 @@ const SidebarNavigation = () => {
       name: "Weather",
       href: "weather",
       icon: "Cloud",
+},
+    {
+      name: "Finance",
+      path: "/finance",
+      icon: "DollarSign",
     },
   ];
 

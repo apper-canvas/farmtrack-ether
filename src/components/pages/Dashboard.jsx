@@ -5,6 +5,7 @@ import { cropService } from "@/services/api/cropService";
 import { taskService } from "@/services/api/taskService";
 import { weatherService } from "@/services/api/weatherService";
 import { toast } from "react-toastify";
+import { financeService } from "@/services/api/financeService";
 import ApperIcon from "@/components/ApperIcon";
 import Loading from "@/components/ui/Loading";
 import ErrorView from "@/components/ui/ErrorView";
@@ -21,12 +22,14 @@ import { isDueSoon, isOverdue } from "@/utils/dateUtils";
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState({
+const [data, setData] = useState({
     farms: [],
     crops: [],
     tasks: [],
     expenses: [],
-weather: null
+    income: [],
+    financialData: null,
+    weather: null
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -40,14 +43,15 @@ weather: null
     setError("");
     
     try {
-const [farms, crops, tasks, weather] = await Promise.all([
+      const [farms, crops, tasks, weather, financialData] = await Promise.all([
         farmService.getAll(),
         cropService.getAll(),
         taskService.getAll(),
         weatherService.getCurrentWeather(),
+        financeService.getTransactionSummary(),
       ]);
 
-setData({ farms, crops, tasks, weather });
+        setData({ farms, crops, tasks, weather, financialData });
     } catch (err) {
       console.error("Failed to load dashboard data:", err);
       setError("Failed to load dashboard data. Please try again.");
@@ -75,6 +79,10 @@ setData({ farms, crops, tasks, weather });
   };
 
 const getStatsData = () => {
+    const financialData = data.financialData || {};
+    const monthlyIncome = financialData.monthlyIncome || 0;
+    const monthlyExpenses = financialData.monthlyExpenses || 0;
+    const monthlyProfit = monthlyIncome - monthlyExpenses;
     const totalFarms = data.farms.length;
     const activeCrops = data.crops.filter(crop => 
       crop.status !== "harvested"
@@ -108,10 +116,8 @@ const getStatsData = () => {
   if (error) {
     return <ErrorView error={error} onRetry={loadDashboardData} />;
   }
-
-  const stats = getStatsData();
+const stats = getStatsData();
   const todaysTasks = getTodaysTasks();
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-sage-50 to-primary-100">
       {/* Header */}
@@ -188,7 +194,41 @@ const getStatsData = () => {
             iconBackground="bg-green-100"
             onClick={() => navigate("/tasks")}
           />
-          
+          {/* Financial Quick Actions */}
+          <div className="bg-white rounded-xl p-6 shadow-card">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <ApperIcon name="DollarSign" className="w-5 h-5 text-primary-600" />
+              Finance Overview
+            </h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Monthly Income</span>
+                <span className="font-semibold text-green-600">
+                  ${data.financialData?.monthlyIncome?.toLocaleString() || '0'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Monthly Expenses</span>
+                <span className="font-semibold text-red-600">
+                  ${data.financialData?.monthlyExpenses?.toLocaleString() || '0'}
+                </span>
+              </div>
+              <div className="flex justify-between items-center pt-2 border-t">
+                <span className="text-gray-900 font-medium">Net Profit</span>
+                <span className={`font-bold ${(data.financialData?.monthlyIncome || 0) - (data.financialData?.monthlyExpenses || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  ${((data.financialData?.monthlyIncome || 0) - (data.financialData?.monthlyExpenses || 0)).toLocaleString()}
+                </span>
+              </div>
+              <Button
+                onClick={() => navigate("/finance")}
+                className="w-full mt-4"
+                variant="outline"
+              >
+                <ApperIcon name="DollarSign" className="w-4 h-4 mr-2" />
+                View Finance Details
+              </Button>
+            </div>
+          </div>
           <StatCard
             title="Weather"
             value={data.weather ? `${data.weather.temperature}°F` : "--"}
@@ -278,7 +318,7 @@ const getStatsData = () => {
                 </Button>
                 
                 
-                <Button
+<Button
                   onClick={() => navigate("/weather")}
                   variant="outline"
                   className="w-full justify-start"
@@ -313,9 +353,8 @@ const getStatsData = () => {
             <div className="text-center p-4 bg-accent-50 rounded-lg">
               <ApperIcon name="AlertCircle" className="h-8 w-8 text-accent-600 mx-auto mb-2" />
               <div className="text-2xl font-bold text-gray-900">{stats.overdueTasks}</div>
-              <div className="text-sm text-gray-600">Overdue Tasks</div>
-</div>
-            
+<div className="text-sm text-gray-600">Overdue Tasks</div>
+            </div>
             <div className="text-center p-4 bg-blue-50 rounded-lg">
               <ApperIcon name="Calendar" className="h-8 w-8 text-blue-600 mx-auto mb-2" />
               <div className="text-2xl font-bold text-gray-900">{stats.activeTasks}</div>

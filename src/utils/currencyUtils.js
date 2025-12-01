@@ -19,7 +19,29 @@ export const parseCurrency = (value) => {
   return isNaN(parsed) ? 0 : parsed;
 };
 
-export const calculateTotal = (expenses) => {
+export const calculateTotal = (transactions) => {
+  if (!Array.isArray(transactions)) return 0;
+  return transactions.reduce((total, transaction) => total + (transaction.amount || 0), 0);
+};
+
+export const calculateMonthlyTotal = (transactions, type = null) => {
+  if (!Array.isArray(transactions)) return 0;
+  
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  
+  return transactions
+    .filter(transaction => {
+      const transactionDate = new Date(transaction.date);
+      const matchesMonth = transactionDate.getMonth() === currentMonth && 
+                          transactionDate.getFullYear() === currentYear;
+      const matchesType = !type || transaction.type === type;
+      return matchesMonth && matchesType;
+    })
+    .reduce((total, transaction) => total + (transaction.amount || 0), 0);
+};
+
+export const calculateExpenseTotal = (expenses) => {
   if (!Array.isArray(expenses)) return 0;
   
   return expenses.reduce((total, expense) => {

@@ -1,0 +1,182 @@
+[
+  {
+    "Id": 1,
+    "type": "expense",
+    "amount": 450.00,
+    "description": "Organic fertilizer for tomato crops",
+    "category": "Fertilizers",
+    "date": "2024-01-15",
+    "createdAt": "2024-01-15T10:30:00Z"
+  },
+  {
+    "Id": 2,
+    "type": "income",
+    "amount": 2800.00,
+    "description": "Sale of winter wheat harvest",
+    "category": "Crop Sales",
+    "date": "2024-01-18",
+    "createdAt": "2024-01-18T14:20:00Z"
+  },
+  {
+    "Id": 3,
+    "type": "expense",
+    "amount": 1200.00,
+    "description": "New irrigation pump installation",
+    "category": "Equipment",
+    "date": "2024-01-20",
+    "createdAt": "2024-01-20T09:15:00Z"
+  },
+  {
+    "Id": 4,
+    "type": "income",
+    "amount": 1500.00,
+    "description": "Fresh vegetables sold at farmer's market",
+    "category": "Crop Sales",
+    "date": "2024-01-22",
+    "createdAt": "2024-01-22T16:45:00Z"
+  },
+  {
+    "Id": 5,
+    "type": "expense",
+    "amount": 320.00,
+    "description": "Seeds for spring planting season",
+    "category": "Seeds & Plants",
+    "date": "2024-01-25",
+    "createdAt": "2024-01-25T11:30:00Z"
+  },
+  {
+    "Id": 6,
+    "type": "expense",
+    "amount": 890.00,
+    "description": "Seasonal farm worker wages",
+    "category": "Labor",
+    "date": "2024-01-28",
+    "createdAt": "2024-01-28T17:00:00Z"
+  },
+  {
+    "Id": 7,
+    "type": "income",
+    "amount": 3200.00,
+    "description": "Bulk corn sale to local feed store",
+    "category": "Crop Sales",
+    "date": "2024-02-01",
+    "createdAt": "2024-02-01T13:20:00Z"
+  },
+  {
+    "Id": 8,
+    "type": "expense",
+    "amount": 275.00,
+    "description": "Fuel for tractors and equipment",
+    "category": "Utilities",
+    "date": "2024-02-05",
+    "createdAt": "2024-02-05T08:45:00Z"
+  },
+  {
+    "Id": 9,
+    "type": "income",
+    "amount": 950.00,
+    "description": "Equipment rental to neighboring farm",
+    "category": "Equipment Rental",
+    "date": "2024-02-08",
+    "createdAt": "2024-02-08T15:30:00Z"
+  },
+  {
+    "Id": 10,
+    "type": "expense",
+    "amount": 180.00,
+    "description": "Pest control treatment for greenhouse",
+    "category": "Maintenance",
+    "date": "2024-02-10",
+    "createdAt": "2024-02-10T12:15:00Z"
+  },
+  {
+    "Id": 11,
+    "type": "income",
+    "amount": 2100.00,
+    "description": "Organic vegetable subscription boxes",
+    "category": "Crop Sales",
+    "date": "2024-02-12",
+    "createdAt": "2024-02-12T18:30:00Z"
+  },
+  {
+    "Id": 12,
+    "type": "expense",
+    "amount": 560.00,
+    "description": "Transportation costs for market deliveries",
+    "category": "Transport",
+    "date": "2024-02-15",
+    "createdAt": "2024-02-15T07:20:00Z"
+  },
+  {
+    "Id": 13,
+    "type": "income",
+    "amount": 1750.00,
+    "description": "Government subsidy payment",
+    "category": "Subsidies",
+    "date": "2024-02-18",
+    "createdAt": "2024-02-18T14:10:00Z"
+  },
+  {
+    "Id": 14,
+    "type": "expense",
+    "amount": 425.00,
+    "description": "Farm insurance quarterly premium",
+    "category": "Insurance",
+    "date": "2024-02-20",
+    "createdAt": "2024-02-20T10:45:00Z"
+  },
+  {
+    "Id": 15,
+    "type": "income",
+    "amount": 3800.00,
+    "description": "Premium organic fruit sales",
+    "category": "Crop Sales",
+    "date": "2024-02-22",
+    "createdAt": "2024-02-22T16:20:00Z"
+  },
+  {
+    "Id": 16,
+    "type": "expense",
+    "amount": 290.00,
+    "description": "Greenhouse heating costs",
+    "category": "Utilities",
+    "date": "2024-02-25",
+    "createdAt": "2024-02-25T09:30:00Z"
+  },
+  {
+    "Id": 17,
+    "type": "expense",
+    "amount": 380.00,
+    "description": "Soil testing and analysis",
+    "category": "Other",
+    "date": "2024-02-28",
+    "createdAt": "2024-02-28T13:45:00Z"
+  },
+  {
+    "Id": 18,
+    "type": "income",
+    "amount": 1200.00,
+    "description": "Farm tour and educational workshop fees",
+    "category": "Consulting",
+    "date": "2024-03-02",
+    "createdAt": "2024-03-02T11:15:00Z"
+  },
+  {
+    "Id": 19,
+    "type": "expense",
+    "amount": 650.00,
+    "description": "New hand tools and small equipment",
+    "category": "Equipment",
+    "date": "2024-03-05",
+    "createdAt": "2024-03-05T15:50:00Z"
+  },
+  {
+    "Id": 20,
+    "type": "income",
+    "amount": 2900.00,
+    "description": "Spring vegetable seedling sales",
+    "category": "Crop Sales",
+    "date": "2024-03-08",
+    "createdAt": "2024-03-08T12:30:00Z"
+  }
+]
