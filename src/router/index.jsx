@@ -9,6 +9,9 @@ const Tasks = lazy(() => import("@/components/pages/Tasks"));
 const Weather = lazy(() => import("@/components/pages/Weather"));
 const Finance = lazy(() => import("@/components/pages/Finance"));
 const NotFound = lazy(() => import("@/components/pages/NotFound"));
+const Equipements = lazy(() => import("@/components/pages/Equipements"));
+
+// Loading fallback component
 const loadingFallback = (
   <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-sage-50 to-primary-100">
     <div className="text-center space-y-4">
@@ -45,7 +48,7 @@ const mainRoutes = [
         <Tasks />
       </Suspense>
     ),
-},
+  },
   {
     path: "weather",
     element: (
@@ -59,6 +62,14 @@ const mainRoutes = [
     element: (
       <Suspense fallback={loadingFallback}>
         <Finance />
+      </Suspense>
+    ),
+  },
+  {
+    path: "equipements",
+    element: (
+      <Suspense fallback={loadingFallback}>
+        <Equipements />
       </Suspense>
     ),
   },

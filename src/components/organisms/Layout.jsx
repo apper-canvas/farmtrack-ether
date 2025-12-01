@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import ApperIcon from "@/components/ApperIcon";
+import Farms from "@/components/pages/Farms";
 const SidebarNavigation = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
@@ -41,15 +42,13 @@ const SidebarNavigation = () => {
       >
         <ApperIcon name={isSidebarOpen ? "X" : "Menu"} className="w-6 h-6" />
       </button>
-
-      {/* Overlay for mobile */}
+{/* Overlay */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
-
       {/* Sidebar */}
       <aside className={`
         fixed top-0 left-0 h-full bg-white border-r border-gray-200 shadow-lg z-40 transition-transform duration-300 ease-in-out
