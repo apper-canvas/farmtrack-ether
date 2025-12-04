@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import ApperIcon from '@/components/ApperIcon';
-import Button from '@/components/atoms/Button';
-import Select from '@/components/atoms/Select';
-import LaborCard from '@/components/organisms/LaborCard';
-import FloatingActionButton from '@/components/molecules/FloatingActionButton';
-import FormField from '@/components/molecules/FormField';
-import Loading from '@/components/ui/Loading';
-import ErrorView from '@/components/ui/ErrorView';
-import Empty from '@/components/ui/Empty';
-import { laborService } from '@/services/api/laborService';
-import { taskService } from '@/services/api/taskService';
-import { toast } from 'react-toastify';
+import React, { useEffect, useState } from "react";
+import { laborService } from "@/services/api/laborService";
+import { taskService } from "@/services/api/taskService";
+import { toast } from "react-toastify";
+import ApperIcon from "@/components/ApperIcon";
+import Loading from "@/components/ui/Loading";
+import ErrorView from "@/components/ui/ErrorView";
+import Empty from "@/components/ui/Empty";
+import Select from "@/components/atoms/Select";
+import Button from "@/components/atoms/Button";
+import LaborCard from "@/components/organisms/LaborCard";
+import FloatingActionButton from "@/components/molecules/FloatingActionButton";
+import FormField from "@/components/molecules/FormField";
 
 function Labors() {
   // State management
@@ -90,7 +90,7 @@ function Labors() {
     }
   }
 
-  // Edit labor
+// Edit labor
   function handleEdit(labor) {
     setEditingLabor(labor);
     setFormData({
@@ -111,8 +111,7 @@ function Labors() {
   // Delete labor
   async function handleDelete(labor) {
     if (!confirm(`Are you sure you want to delete ${labor.name}?`)) return;
-    
-    try {
+try {
       await laborService.delete(labor.Id);
       toast.success('Worker deleted successfully');
       await loadData();
